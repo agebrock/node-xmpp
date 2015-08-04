@@ -4,7 +4,9 @@
  * Echo Bot - the XMPP Hello World
  **/
 var xmpp = require('../index')
+
 var argv = process.argv
+
 
 if (argv.length !== 4) {
     console.error(
@@ -15,21 +17,24 @@ if (argv.length !== 4) {
 
 var client = new xmpp.Client({
     jid: argv[2],
-    password: argv[3]
+    password: argv[3],
+    host: 'talk.google.com',
+    port: 5222
 })
+
 
 client.on('online', function() {
     console.log('online')
     client.send(new xmpp.Element('presence', { })
-      .c('show').t('chat').up()
-      .c('status').t('Happily echoing your <message/> stanzas')
+        .c('show').t('chat').up()
+        .c('status').t('Happily echoing your <message/> stanzas')
     )
 })
 
 client.on('stanza', function(stanza) {
     if (stanza.is('message') &&
-      // Important: never reply to errors!
-      (stanza.attrs.type !== 'error')) {
+        // Important: never reply to errors!
+        (stanza.attrs.type !== 'error')) {
         // Swap addresses...
         stanza.attrs.to = stanza.attrs.from
         delete stanza.attrs.from

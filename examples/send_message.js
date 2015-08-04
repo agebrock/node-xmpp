@@ -1,7 +1,8 @@
 'use strict';
 
 var xmpp = require('../index')
-  , argv = process.argv
+var argv = process.argv
+
 
 if (argv.length < 6) {
     console.error('Usage: node send_message.js <my-jid> ' +
@@ -9,15 +10,25 @@ if (argv.length < 6) {
     process.exit(1)
 }
 
-var cl = new xmpp.Client({ jid: argv[2],  password: argv[3] })
+var cl = new xmpp.Client({
+    host: 'talk.google.com',
+    port: 5222,
+    jid: argv[2],
+    password: argv[3]
+})
+
 
 cl.addListener('online', function(data) {
     console.log('Connected as ' + data.jid.user + '@' + data.jid.domain + '/' + data.jid.resource)
     argv.slice(5).forEach(function(to) {
         var stanza = new xmpp.Element(
             'message',
-            { to: to, type: 'chat' }
+            {
+                to: to,
+                type: 'chat'
+            }
         ).c('body').t(argv[4])
+
         cl.send(stanza)
     })
 
